@@ -3,6 +3,11 @@
 docker compose up
 ```
 
+### Accessing the application
+```
+http://example.test
+```
+
 ### Running commands
 ```
 docker exec -it example-php-1 bash
