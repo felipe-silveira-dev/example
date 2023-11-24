@@ -8,7 +8,7 @@ docker compose up
 http://example.test
 ```
 
-### Running commands
+### Accessing container
 ```
 docker exec -it example-php-1 bash
 ```
