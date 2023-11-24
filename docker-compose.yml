@@ -1,0 +1,37 @@
+version: '3.8'
+services:
+  nginx:
+    build:
+      context: .
+      dockerfile: ./infra/nginx/nginx.Dockerfile
+    ports:
+      - 80:80
+    volumes:
+      - ./:/var/www/html
+    depends_on:
+      - mysql
+      - php
+
+  mysql:
+    image: mysql
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_DATABASE: developer
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: password
+
+  php:
+    build:
+      context: .
+      dockerfile: ./infra/php/php.Dockerfile
+    volumes:
+      - ./:/var/www/html
+
+  npm:
+    image: node:latest
+    volumes:
+      - ./:/var/www/html
+    entrypoint: ["npm"]
+    working_dir: /var/www/html
+
