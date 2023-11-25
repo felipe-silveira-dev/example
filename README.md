@@ -1,6 +1,6 @@
 ### Running project
 ```
-make build
+docker compose up
 ```
 
 ### Accessing the application
@@ -11,6 +11,8 @@ http://example.test
 ### Accessing container
 ```
 docker exec -it example-php-1 bash
+OR
+./console.sh bash
 ```
 
 ### When deploying to production, you can use the following command to optimize the application:
