@@ -1,6 +1,6 @@
 ### Running project
 ```
-docker compose up
+make build
 ```
 
 ### Accessing the application

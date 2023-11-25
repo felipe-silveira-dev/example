@@ -18,6 +18,7 @@ services:
       - 3306:3306
     environment:
       MYSQL_DATABASE: developer
+      MYSQL_USER: developer
       MYSQL_PASSWORD: password
       MYSQL_ROOT_PASSWORD: password
 

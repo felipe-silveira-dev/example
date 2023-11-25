@@ -1,36 +1,32 @@
+# Use a imagem base do PHP 8.2 FPM Alpine
 FROM php:8.2-fpm-alpine
 
-ENV PHPGROUP=laravel
-ENV PHPUSER=laravel
+WORKDIR /var/www/html
 
-RUN adduser -g ${PHPGROUP} -s /bin/sh -D ${PHPUSER}
-
-RUN sed -i "s/user = www-data/user = ${PHPUSER}/g" /usr/local/etc/php-fpm.d/www.conf
-RUN sed -i "s/group = www-data/group = ${PHPGROUP}/g" /usr/local/etc/php-fpm.d/www.conf
-
-RUN mkdir -p /var/www/html/public
-
+# Linux Library
 RUN set -x \
     && apk update \
     && apk upgrade \
-    && apk add --no-cache bash git openssh php-cli zlib-dev freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev zip linux-headers
+    && apk add --no-cache bash vim  openssh php-cli zlib-dev freetype-dev libpng-dev libjpeg-turbo-dev libzip-dev zip mysql-client mariadb-connector-c-dev
 
-RUN set -x \
-    docker-php-ext-install pdo pdo_mysql php-dev opcache bcmath pcntl gd ctype curl dom fileinfo filter hash mbstring tokenizer xml pdo_session pcre xml
+# Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# PHP Extension
+RUN docker-php-ext-install opcache bcmath exif pdo pdo_mysql zip gd
+
+RUN docker-php-ext-configure gd --enable-gd --with-freetype --with-jpeg \
+    && docker-php-ext-install -j$(nproc) gd
 
 RUN set -x \
     && apk add --no-cache pcre-dev ${PHPIZE_DEPS} \
     && pecl install redis \
     && docker-php-ext-enable redis
 
-RUN pecl install xdebug \ && docker-php-ext-enable xdebug
-RUN apk del pcre-dev ${PHPIZE_DEPS}
 
-RUN set -x \
-    && curl -L https://getcomposer.org/composer.phar -o /usr/local/bin/composer \
-    && chmod +x /usr/local/bin/composer
-
+# Copia os arquivos de configuração do PHP
 COPY infra/php/php.ini /usr/local/etc/php/conf.d/prod.ini
 COPY infra/php/fpm.conf /usr/local/etc/php-fpm.d/zz-app.conf
 
+# Comando padrão ao iniciar o contêiner
 CMD ["php-fpm", "-y", "/usr/local/etc/php-fpm.conf", "-R"]
