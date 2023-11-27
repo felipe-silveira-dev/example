@@ -2,6 +2,7 @@
 
 namespace App\DTO;
 
+use App\ENUMS\SupportStatus;
 use App\Http\Requests\StoreSupportRequest;
 use Illuminate\Contracts\Support\Arrayable;
 
@@ -9,7 +10,7 @@ class CreateSupportDTO implements Arrayable
 {
     public function __construct(
         public string $subject,
-        public string $status,
+        public SupportStatus $status,
         public string $body,
     ) {
     }
@@ -18,7 +19,7 @@ class CreateSupportDTO implements Arrayable
     {
         return new self(
             $request->input('subject'),
-            'open',
+            SupportStatus::OPEN,
             $request->input('body'),
         );
     }
