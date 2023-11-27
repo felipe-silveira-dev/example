@@ -4,8 +4,12 @@ cp .env.example .env
 docker compose up
 - wait for the containers to be created and run the following commands to give the necessary permissions and install the dependencies:
     chmod +x console.sh
+    sudo chmod o+w ./storage/ -R
+    or
     sudo chown -R $USER:www-data storage
+    
     sudo chown -R $USER:www-data tests
+    
 
 ./console.sh composer install
 ./console.sh artisan key:generate

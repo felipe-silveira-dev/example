@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\DTO\CreateSupportDTO;
 use App\DTO\UpdateSupportDTO;
+use App\Interfaces\PaginationInterface;
 use App\Models\Support;
 use stdClass;
 
@@ -11,17 +12,31 @@ class SupportEloquentORM implements SupportRepositoryInterface
 {
     public function __construct(
         protected Support $model
-    ) { }
+    ) {
+    }
+
+    public function paginate(int $page = 1, int $perPage = 10, string $filter = null): PaginationInterface
+    {
+        // return new \stdClass();
+        $supports = $this->model->select('id', 'subject', 'body', 'created_at', 'updated_at')
+            ->when($filter, function ($query, $filter) {
+                return $query->where('subject', 'like', "%{$filter}%");
+                // ->orWhere('body', 'like', "%{$filter}%");
+            })
+            ->paginate($perPage, ['*'], 'page', $page);
+
+        return new PaginationPresenter($supports);
+    }
 
     public function getAll(string $filter = null): array
     {
         // return [];
         $supports = $this->model->select('id', 'subject', 'body', 'created_at', 'updated_at')
-                        ->when($filter, function ($query, $filter) {
-                            return $query->where('subject', 'like', "%{$filter}%");
-                                        // ->orWhere('body', 'like', "%{$filter}%");
-                        })
-                        ->paginate();
+            ->when($filter, function ($query, $filter) {
+                return $query->where('subject', 'like', "%{$filter}%");
+                // ->orWhere('body', 'like', "%{$filter}%");
+            })
+            ->get();
 
         return $supports->toArray();
     }
@@ -30,6 +45,7 @@ class SupportEloquentORM implements SupportRepositoryInterface
     {
         // return new \stdClass();
         $support = $this->model->find($id);
+
         return (object) $support->toArray();
     }
 
@@ -59,4 +75,3 @@ class SupportEloquentORM implements SupportRepositoryInterface
         return $support->delete();
     }
 }
-

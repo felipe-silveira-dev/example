@@ -8,25 +8,24 @@ use App\Http\Requests\StoreSupportRequest;
 use App\Http\Requests\UpdateSupportRequest;
 use App\Models\Support;
 use App\Services\SupportService;
-use Illuminate\Http\Client\Request;
+use Illuminate\Http\Request;
 
 class SupportController extends Controller
 {
     public function __construct(
         protected SupportService $service
-    ) { }
+    ) {
+    }
 
-    /**
-     * Display a listing of the resource. ? receber um filtro é uma boa ideia?
-     */
     public function index(Request $request)
     {
-        // $request->validate([
-        //     'filter' => 'nullable|string|max:255'
-        // ]);
+
+        dd($this->service->paginate());
+        $request->validate([
+            'filter' => 'nullable|string|max:255'
+        ]);
 
         try {
-            // Obtenção do filtro (caso exista)
             $filter = $request->input('filter');
 
             // Se houver um filtro, aplicar trim
@@ -61,7 +60,7 @@ class SupportController extends Controller
             return redirect()->back()->with('success', 'Suporte criado com sucesso!');
         } catch (\Exception $e) {
             // Tratamento de exceção (adapte conforme necessário)
-            return redirect()->back()->with('error', 'Ocorreu um erro ao processar a requisição.' . $e->getMessage());
+            return redirect()->back()->with('error', 'Ocorreu um erro ao processar a requisição.'.$e->getMessage());
         }
     }
 
@@ -76,7 +75,7 @@ class SupportController extends Controller
             return view('support.show', compact('support'));
         } catch (\Exception $e) {
             // Tratamento de exceção (adapte conforme necessário)
-            return redirect()->back()->with('error', 'Ocorreu um erro ao processar a requisição.' . $e->getMessage());
+            return redirect()->back()->with('error', 'Ocorreu um erro ao processar a requisição.'.$e->getMessage());
         }
     }
 
@@ -100,7 +99,7 @@ class SupportController extends Controller
             return redirect()->back()->with('success', 'Suporte atualizado com sucesso!');
 
         } catch (\Exception $e) {
-            return redirect()->back()->with('error', 'Ocorreu um erro ao processar a requisição.' . $e->getMessage());
+            return redirect()->back()->with('error', 'Ocorreu um erro ao processar a requisição.'.$e->getMessage());
         }
     }
 

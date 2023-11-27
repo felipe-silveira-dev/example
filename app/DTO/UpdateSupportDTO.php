@@ -12,7 +12,8 @@ class UpdateSupportDTO implements Arrayable
         public string $subject,
         public string $status,
         public string $body,
-    ) { }
+    ) {
+    }
 
     public static function makeFromRequest(UpdateSupportRequest $request): self
     {
